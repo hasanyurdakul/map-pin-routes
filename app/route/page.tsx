@@ -1,7 +1,7 @@
 import React from 'react';
 
-const page = () => {
-  return <div>page</div>;
+const RoutePage = () => {
+  return <div>RoutePage</div>;
 };
 
-export default page;
+export default RoutePage;
