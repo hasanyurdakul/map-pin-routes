@@ -7,6 +7,8 @@ import { useMarkedLocationStore } from '@/store/useMarkedLocationStore';
 import { MarkedLocation } from '@/types/markedLocation';
 import { FiEdit } from 'react-icons/fi';
 import { BsTrash2 } from 'react-icons/bs';
+import { ColoredMapMarker } from '@/components/ColoredMapMarker';
+import Image from 'next/image';
 
 const ListPage = () => {
   const router = useRouter();
@@ -46,6 +48,14 @@ const ListPage = () => {
             gap={4}
             border={'1px solid #E2E8F0'}
           >
+            <div>
+              <Image
+                width={40}
+                height={40}
+                alt="marker"
+                src={`data:image/svg+xml;utf8,${ColoredMapMarker(location.color, 'svg') || ''}`}
+              />
+            </div>
             <Box flex={1}>
               <Text fontWeight="bold">{location.name}</Text>
               <Text fontSize="sm" color="gray.600">
