@@ -33,7 +33,7 @@ export default function RootLayout({
           <Container fluid centerContent>
             <Navbar />
             {/* Page Content  */}
-            <Container maxW={'4xl'} fluid minHeight={'100vh'}>
+            <Container maxW={'4xl'} fluid minHeight={'100vh'} p={{ base: 2, md: 4 }}>
               {children}
             </Container>
           </Container>
