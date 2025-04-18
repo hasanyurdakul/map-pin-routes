@@ -1,7 +1,6 @@
 'use client';
 import {
   Stack,
-  Link as ChakraLink,
   Container,
   Box,
   Button,
@@ -9,6 +8,7 @@ import {
   Dialog,
   Portal,
   Icon,
+  Text,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -36,7 +36,7 @@ const Navbar = () => {
     >
       {navigation.map(item => (
         <Link key={item.href} href={item.href} passHref>
-          <ChakraLink
+          <Text
             w={inDrawer ? '100%' : 'auto'}
             p={inDrawer ? 2 : 0}
             fontWeight={pathname === item.href ? 'bold' : 'normal'}
@@ -45,7 +45,7 @@ const Navbar = () => {
             fontSize={inDrawer ? 'lg' : 'md'}
           >
             {item.name}
-          </ChakraLink>
+          </Text>
         </Link>
       ))}
     </Stack>
