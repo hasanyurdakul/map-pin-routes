@@ -94,8 +94,8 @@ const AddPage = () => {
                           field: {
                             name: string;
                             value: string;
-                            onChange: (e: React.ChangeEvent<any>) => void;
-                            onBlur: (e: React.FocusEvent<any>) => void;
+                            onChange: (e: React.ChangeEvent<unknown>) => void;
+                            onBlur: (e: React.FocusEvent<unknown>) => void;
                           };
                           meta: { touched: boolean; error?: string };
                         }) => (
@@ -112,8 +112,8 @@ const AddPage = () => {
                           field: {
                             name: string;
                             value: string;
-                            onChange: (e: React.ChangeEvent<any>) => void;
-                            onBlur: (e: React.FocusEvent<any>) => void;
+                            onChange: (e: React.ChangeEvent<unknown>) => void;
+                            onBlur: (e: React.FocusEvent<unknown>) => void;
                           };
                           meta: { touched: boolean; error?: string };
                         }) => (

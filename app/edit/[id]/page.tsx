@@ -117,7 +117,12 @@ export default function EditLocation({ params }: { params: Promise<{ id: string 
                             field,
                             meta,
                           }: {
-                            field: any;
+                            field: {
+                              name: string;
+                              value: string;
+                              onChange: (e: React.ChangeEvent<unknown>) => void;
+                              onBlur: (e: React.FocusEvent<unknown>) => void;
+                            };
                             meta: { touched: boolean; error?: string };
                           }) => (
                             <Field.Root invalid={meta.touched && !meta.error} required flexGrow={1}>
@@ -130,7 +135,12 @@ export default function EditLocation({ params }: { params: Promise<{ id: string 
                             field,
                             meta,
                           }: {
-                            field: any;
+                            field: {
+                              name: string;
+                              value: string;
+                              onChange: (e: React.ChangeEvent<unknown>) => void;
+                              onBlur: (e: React.FocusEvent<unknown>) => void;
+                            };
                             meta: { touched: boolean; error?: string };
                           }) => (
                             <Field.Root invalid={meta.touched && !meta.error} required>
