@@ -13,7 +13,7 @@ import {
   Portal,
   VStack,
 } from '@chakra-ui/react';
-import { Formik, Form, Field as FormikField } from 'formik';
+import { Formik, Form, Field as FormikField, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
@@ -33,7 +33,10 @@ const AddPage = () => {
   const [position, setPosition] = useState<[number, number] | null>(null);
   const addMarkedLocation = useMarkedLocationStore(state => state.addMarkedLocation);
 
-  const handleFormSubmit = (values: { name: string; color: string }, { resetForm }: any) => {
+  const handleFormSubmit = (
+    values: { name: string; color: string },
+    { resetForm }: FormikHelpers<{ name: string; color: string }>
+  ) => {
     if (!position) {
       toaster.create({
         title: 'Error',
@@ -84,15 +87,37 @@ const AddPage = () => {
                   <Form>
                     <HStack width="100%" gap={2}>
                       <FormikField name="name">
-                        {({ field, meta }: any) => (
-                          <Field.Root invalid={meta.touched && meta.error} required flexGrow={1}>
+                        {({
+                          field,
+                          meta,
+                        }: {
+                          field: {
+                            name: string;
+                            value: string;
+                            onChange: (e: React.ChangeEvent<any>) => void;
+                            onBlur: (e: React.FocusEvent<any>) => void;
+                          };
+                          meta: { touched: boolean; error?: string };
+                        }) => (
+                          <Field.Root invalid={meta.touched && !meta.error} required flexGrow={1}>
                             <Input {...field} placeholder="Enter location name" />
                           </Field.Root>
                         )}
                       </FormikField>
                       <FormikField name="color">
-                        {({ field, meta }: any) => (
-                          <Field.Root invalid={meta.touched && meta.error} required>
+                        {({
+                          field,
+                          meta,
+                        }: {
+                          field: {
+                            name: string;
+                            value: string;
+                            onChange: (e: React.ChangeEvent<any>) => void;
+                            onBlur: (e: React.FocusEvent<any>) => void;
+                          };
+                          meta: { touched: boolean; error?: string };
+                        }) => (
+                          <Field.Root invalid={meta.touched && !meta.error} required>
                             <ColorPicker.Root
                               value={parseColor(field.value)}
                               onValueChange={color => {

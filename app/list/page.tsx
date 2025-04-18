@@ -7,8 +7,6 @@ import { useMarkedLocationStore } from '@/store/useMarkedLocationStore';
 import { MarkedLocation } from '@/types/markedLocation';
 import { FiEdit } from 'react-icons/fi';
 import { BsTrash2 } from 'react-icons/bs';
-import { ColoredMapMarker } from '@/components/ColoredMapMarker';
-import Image from 'next/image';
 import { LuMapPin } from 'react-icons/lu';
 
 const ListPage = () => {

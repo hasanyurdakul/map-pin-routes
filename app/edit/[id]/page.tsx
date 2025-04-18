@@ -113,15 +113,27 @@ export default function EditLocation({ params }: { params: Promise<{ id: string 
                     <Form>
                       <HStack width="100%" gap={2}>
                         <FormikField name="name">
-                          {({ field, meta }: any) => (
-                            <Field.Root invalid={meta.touched && meta.error} required flexGrow={1}>
+                          {({
+                            field,
+                            meta,
+                          }: {
+                            field: any;
+                            meta: { touched: boolean; error?: string };
+                          }) => (
+                            <Field.Root invalid={meta.touched && !meta.error} required flexGrow={1}>
                               <Input {...field} placeholder="Enter location name" />
                             </Field.Root>
                           )}
                         </FormikField>
                         <FormikField name="color">
-                          {({ field, meta }: any) => (
-                            <Field.Root invalid={meta.touched && meta.error} required>
+                          {({
+                            field,
+                            meta,
+                          }: {
+                            field: any;
+                            meta: { touched: boolean; error?: string };
+                          }) => (
+                            <Field.Root invalid={meta.touched && !meta.error} required>
                               <ColorPicker.Root
                                 value={parseColor(field.value)}
                                 onValueChange={color => {
