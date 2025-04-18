@@ -15,8 +15,8 @@ const Navbar = () => {
 
   return (
     <>
-      <Container maxW="4xl" py={4}>
-        <Stack as="nav" direction="row" gap={6}>
+      <Container maxW="6xl" py={4}>
+        <Stack as="nav" direction="row" gap={6} borderBottom={'1px solid #1100ff'} pb={4}>
           {navigation.map(item => (
             <Link key={item.href} href={item.href} passHref>
               <ChakraLink

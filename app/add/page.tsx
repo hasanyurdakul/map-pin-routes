@@ -11,7 +11,6 @@ import {
   Input,
   parseColor,
   Portal,
-  Stack,
   VStack,
 } from '@chakra-ui/react';
 import { Formik, Form, Field as FormikField } from 'formik';
@@ -62,7 +61,7 @@ const AddPage = () => {
   };
 
   return (
-    <Container maxW="container.xl" py={8}>
+    <Container maxW="6xl" py={8}>
       <VStack gap={6}>
         <Formik
           initialValues={{ name: '', color: '#FF0000' }}
@@ -120,7 +119,7 @@ const AddPage = () => {
                           </Field.Root>
                         )}
                       </FormikField>
-                      <Button type="submit" colorScheme="blue">
+                      <Button type="submit" colorPalette="blue">
                         Add Location
                       </Button>
                     </HStack>
