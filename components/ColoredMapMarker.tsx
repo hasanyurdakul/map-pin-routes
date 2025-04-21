@@ -8,10 +8,9 @@ export function ColoredMapMarker(color: string): L.DivIcon {
   </svg>`;
 
   return L.divIcon({
-    className: 'custom-marker',
     iconSize: [40, 40],
     iconAnchor: [20, 40],
-    popupAnchor: [0, 50],
+    popupAnchor: [0, 0],
     html: svgString,
   });
 }

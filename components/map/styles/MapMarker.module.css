@@ -1,0 +1,20 @@
+.popup {
+  padding: 8px;
+  min-width: 200px;
+}
+
+.popupTitle {
+  font-size: 14px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.popupInfo {
+  font-size: 12px;
+  color: #666;
+}
+
+.coordinateInfo {
+  margin-top: 2px;
+}
