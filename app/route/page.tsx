@@ -1,95 +1,104 @@
 'use client';
 
-import { Box, Container, Heading } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { Box, Container, Heading, Spinner, Text } from '@chakra-ui/react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useMarkedLocationStore } from '@/store/useMarkedLocationStore';
-import { MarkedLocation } from '@/types/markedLocation';
+import { RouteEmptyState } from '@/components/route/EmptyState';
+import { DEFAULT_MAP_CONFIG, sortLocationsByDistance } from '@/utils/routeUtils';
 
 const MapWithNoSSR = dynamic(() => import('@/components/Map'), {
   ssr: false,
 });
 
-function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371; // Radius of the Earth in km
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-function sortLocationsByDistance(
-  locations: MarkedLocation[],
-  currentLat: number,
-  currentLon: number
-): MarkedLocation[] {
-  return [...locations].sort((a, b) => {
-    const distA = calculateDistance(currentLat, currentLon, a.latitude, a.longitude);
-    const distB = calculateDistance(currentLat, currentLon, b.latitude, b.longitude);
-    return distA - distB;
-  });
-}
-
 export default function RouteDisplay() {
-  const locations = useMarkedLocationStore(state => state.MarkedLocations);
+  const locations = useMarkedLocationStore(useCallback(state => state.MarkedLocations, []));
   const [currentPosition, setCurrentPosition] = useState<[number, number] | null>(null);
-  const [sortedLocations, setSortedLocations] = useState<MarkedLocation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const pos: [number, number] = [position.coords.latitude, position.coords.longitude];
-          setCurrentPosition(pos);
-
-          if (locations.length > 0) {
-            const sorted = sortLocationsByDistance(locations, pos[0], pos[1]);
-            setSortedLocations(sorted);
-          }
-        },
-        () => {
-          // If geolocation fails, use a default position (Ankara)
-          const defaultPos: [number, number] = [39.9334, 32.8597];
-          setCurrentPosition(defaultPos);
-
-          if (locations.length > 0) {
-            const sorted = sortLocationsByDistance(locations, defaultPos[0], defaultPos[1]);
-            setSortedLocations(sorted);
-          }
-        }
-      );
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser');
+      setIsLoading(false);
+      setCurrentPosition(DEFAULT_MAP_CONFIG.CENTER);
+      return;
     }
-  }, [locations]);
 
-  const center = currentPosition || [39.9334, 32.8597];
-  const markers = sortedLocations.map(loc => ({
-    position: [loc.latitude, loc.longitude] as [number, number],
-    color: loc.color,
-    name: loc.name,
-  }));
+    const successHandler = (position: GeolocationPosition) => {
+      const pos: [number, number] = [position.coords.latitude, position.coords.longitude];
+      setCurrentPosition(pos);
+      setIsLoading(false);
+      setError(null);
+    };
 
-  if (currentPosition) {
-    markers.unshift({
-      position: currentPosition,
-      color: '#000000', // Black color for current position
-      name: 'Current Location',
+    const errorHandler = (err: GeolocationPositionError) => {
+      console.warn('Geolocation error:', err);
+      setError('Could not get your location. Using default position.');
+      setCurrentPosition(DEFAULT_MAP_CONFIG.CENTER);
+      setIsLoading(false);
+    };
+
+    navigator.geolocation.getCurrentPosition(successHandler, errorHandler, {
+      enableHighAccuracy: DEFAULT_MAP_CONFIG.GEOLOCATION.HIGH_ACCURACY,
+      timeout: DEFAULT_MAP_CONFIG.GEOLOCATION.TIMEOUT,
+      maximumAge: DEFAULT_MAP_CONFIG.GEOLOCATION.MAX_AGE,
     });
-  }
+  }, []);
+
+  const sortedLocations = useMemo(() => {
+    if (!currentPosition || locations.length === 0) return locations;
+    return sortLocationsByDistance(locations, currentPosition[0], currentPosition[1]);
+  }, [currentPosition, locations]);
+
+  const markers = useMemo(() => {
+    const locationMarkers = sortedLocations.map(loc => ({
+      position: [loc.latitude, loc.longitude] as [number, number],
+      color: loc.color,
+      name: loc.name,
+    }));
+
+    if (currentPosition) {
+      locationMarkers.unshift({
+        position: currentPosition,
+        color: DEFAULT_MAP_CONFIG.CURRENT_LOCATION_MARKER.COLOR,
+        name: DEFAULT_MAP_CONFIG.CURRENT_LOCATION_MARKER.NAME,
+      });
+    }
+
+    return locationMarkers;
+  }, [currentPosition, sortedLocations]);
+
+  const center = currentPosition || DEFAULT_MAP_CONFIG.CENTER;
 
   return (
     <Container maxW="6xl" py={8}>
       <Heading size="lg" mb={6}>
         Route Display
       </Heading>
-      <Box h="600px" w="100%">
-        <MapWithNoSSR center={center} zoom={13} markers={markers} drawRoute={true} />
-      </Box>
+      {isLoading ? (
+        <Box textAlign="center" py={8}>
+          <Spinner size="xl" />
+          <Text mt={4}>Getting your location...</Text>
+        </Box>
+      ) : (
+        <>
+          {error && (
+            <Box mb={4} p={4} bg="red.50" color="red.600" borderRadius="md">
+              {error}
+            </Box>
+          )}
+          <Box h="600px" w="100%">
+            <MapWithNoSSR
+              center={center}
+              zoom={DEFAULT_MAP_CONFIG.ZOOM}
+              markers={markers}
+              drawRoute={markers.length > 1}
+            />
+          </Box>
+          {locations.length === 0 && <RouteEmptyState />}
+        </>
+      )}
     </Container>
   );
 }

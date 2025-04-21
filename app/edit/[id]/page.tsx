@@ -2,25 +2,24 @@
 
 import { Container, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useMarkedLocationStore } from '@/store/useMarkedLocationStore';
 import { toaster } from '@/components/ui/toaster';
 import { LocationForm } from '@/components/forms/LocationForm';
 import { LocationFormValues, MarkedLocation } from '@/types/form';
 
 interface EditPageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 const EditPage = ({ params }: EditPageProps) => {
+  const { id } = use(params);
   const router = useRouter();
   const [location, setLocation] = useState<MarkedLocation | null>(null);
   const store = useMarkedLocationStore();
 
   useEffect(() => {
-    const locationData = store.getMarkedLocation(params.id);
+    const locationData = store.getMarkedLocation(id);
     if (!locationData) {
       toaster.create({
         title: 'Error',
@@ -31,7 +30,7 @@ const EditPage = ({ params }: EditPageProps) => {
       return;
     }
     setLocation(locationData);
-  }, [params.id, router, store]);
+  }, [id, router, store]);
 
   const handleFormSubmit = (values: LocationFormValues) => {
     if (!values.position) {
@@ -43,7 +42,7 @@ const EditPage = ({ params }: EditPageProps) => {
       return;
     }
 
-    store.updateMarkedLocation(params.id, {
+    store.updateMarkedLocation(id, {
       name: values.name,
       color: values.color,
       latitude: values.position[0],

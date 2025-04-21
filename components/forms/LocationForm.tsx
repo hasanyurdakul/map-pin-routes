@@ -5,13 +5,12 @@ import { locationFormValidationSchema } from '@/utils/validationSchemas';
 import { LocationNameField } from './LocationNameField';
 import { LocationColorField } from './LocationColorField';
 import dynamic from 'next/dynamic';
+import { DEFAULT_MAP_CONFIG } from '@/utils/routeUtils';
 
 const MapWithNoSSR = dynamic(() => import('@/components/Map'), {
   ssr: false,
 });
 
-const DEFAULT_CENTER: [number, number] = [39.9334, 32.8597];
-const DEFAULT_ZOOM = 13;
 const DEFAULT_INITIAL_VALUES: LocationFormValues = {
   name: '',
   color: '#FF0000',
@@ -54,8 +53,8 @@ export const LocationForm = ({
         <>
           <Box h="400px" w="100%" mb={6}>
             <MapWithNoSSR
-              center={values.position ? values.position : DEFAULT_CENTER}
-              zoom={DEFAULT_ZOOM}
+              center={values.position ? values.position : DEFAULT_MAP_CONFIG.CENTER}
+              zoom={DEFAULT_MAP_CONFIG.ZOOM}
               onMarkerPlaced={position => setFieldValue('position', position)}
               markers={values.position ? [{ position: values.position, color: values.color }] : []}
             />

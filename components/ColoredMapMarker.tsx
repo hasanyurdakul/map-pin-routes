@@ -12,5 +12,6 @@ export function ColoredMapMarker(color: string): L.DivIcon {
     iconAnchor: [20, 40],
     popupAnchor: [0, 0],
     html: svgString,
+    className: 'custom-div-icon',
   });
 }

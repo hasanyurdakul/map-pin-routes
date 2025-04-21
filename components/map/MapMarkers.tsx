@@ -10,7 +10,7 @@ interface MapMarkersProps {
   markers: MapMarker[];
 }
 
-export const MapMarkers = memo(({ markers }: MapMarkersProps) => {
+const MapMarkersComponent = ({ markers }: MapMarkersProps) => {
   return (
     <>
       {markers.map((marker, index) => {
@@ -37,4 +37,7 @@ export const MapMarkers = memo(({ markers }: MapMarkersProps) => {
       })}
     </>
   );
-});
+};
+
+export const MapMarkers = memo(MapMarkersComponent);
+MapMarkers.displayName = 'MapMarkers';
